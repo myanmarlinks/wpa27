@@ -2,7 +2,8 @@
 
 define("DD", realpath("../"));
 
-require "../controller/controllers.php";
+require DD . "/wpa27/functions.php";
+require  DD . "/app/controller/controllers.php";
 
 if(isset($_GET['page'])) {
 	$page = $_GET['page'];
@@ -11,28 +12,9 @@ if(isset($_GET['page'])) {
 }
 
 $controller = ucfirst($page) . "Controller";
-
-call_user_func($controller);
-/* 
-blog = Blog + Controller
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- ?>
+if(function_exists($controller)) {
+	call_user_func($controller);
+} else {
+	echo "404! Not Found! Idiot!";
+}
+?>

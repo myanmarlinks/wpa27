@@ -15,11 +15,6 @@ function HomeController() {
 	load_view("index", $data);
 }
 
-function load_view($view, $data) {
-	extract($data);
-	require DD . "/view/" . $view . ".php"; 
-		
-}
 
 
 
