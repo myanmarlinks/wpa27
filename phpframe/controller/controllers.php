@@ -6,4 +6,9 @@ function BlogController() {
 	require "../view/blog.php";  
 }
 
+function HomeController() {
+	$foo = "Bar";
+	require "../view/index.php";
+}
+
  ?>
