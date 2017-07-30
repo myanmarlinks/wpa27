@@ -1,5 +1,7 @@
 <?php
 
+define("DD", realpath("../"));
+
 require "../controller/controllers.php";
 
 if(isset($_GET['page'])) {

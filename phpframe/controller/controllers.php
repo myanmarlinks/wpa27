@@ -1,14 +1,36 @@
 <?php 
 
 function BlogController() {
-	$title = "Myanmar Links";
-	$another = "Test";
-	require "../view/blog.php";  
+	$data = [
+		'title'	=> 'Myanmar Links',
+		"another"	=> 'Test'
+	];
+	load_view("blog", $data);
 }
 
 function HomeController() {
-	$foo = "Bar";
-	require "../view/index.php";
+	$data = [
+		'foo'	=> 'Bar'
+	];
+	load_view("index", $data);
 }
+
+function load_view($view, $data) {
+	extract($data);
+	require DD . "/view/" . $view . ".php"; 
+		
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
  ?>
