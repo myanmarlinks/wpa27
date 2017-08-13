@@ -27,8 +27,22 @@ if(empty($a_uri)) {
 
 $controller = ucfirst($page) . "Controller";
 if(function_exists($controller)) {
-	call_user_func($controller);
+	array_shift($a_uri);
+	$func_reflection = new ReflectionFunction($controller);
+	$num_of_params = $func_reflection->getNumberOfParameters();
+	if(count($a_uri) == $num_of_params) {
+		call_user_func_array($controller, $a_uri);
+	} else {
+		echo "404! Not Found! Idiot!";	
+	}
 } else {
 	echo "404! Not Found! Idiot!";
 }
+
+
+
+
+
+
+
 ?>

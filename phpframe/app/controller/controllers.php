@@ -1,18 +1,28 @@
 <?php 
 
-function BlogController() {
+function BlogController($category, $id) {
+
 	$data = [
-		'title'	=> 'Myanmar Links',
-		"another"	=> 'Test'
+		'title'		=> 'Myanmar Links',
+		"another"	=> 'Test',
+		'category'	=> $category,
+		'id'		=> $id
 	];
-	load_view("blog", $data);
+	_load_view("blog", $data);
 }
 
 function HomeController() {
 	$data = [
 		'foo'	=> 'Bar'
 	];
-	load_view("index", $data);
+	_load_view("index", $data);
+}
+
+function FooController($test) {
+	$data = [
+		'test'	=> $test
+	];
+	_load_view("test", $data);
 }
 
 

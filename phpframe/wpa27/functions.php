@@ -1,6 +1,6 @@
 <?php 
 
-function load_view($view, $data) {
+function _load_view($view, $data) {
 	ob_start("ob_gzhandler");
 	extract($data);
 	require DD . "/app/view/" . $view . ".php"; 
