@@ -3,6 +3,7 @@
 define("DD", realpath("../"));
 
 require DD . "/wpa27/functions.php";
+require DD . "/wpa27/database.php";
 require  DD . "/app/controller/controllers.php";
 
 $request_uri = explode("/", $_SERVER['REQUEST_URI']);

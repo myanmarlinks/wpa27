@@ -25,6 +25,13 @@ function FooController($test) {
 	_load_view("test", $data);
 }
 
+function DataController($id) {
+	$data = [
+		'students' => _getDataById("students", $id)
+	];
+	_load_view("data", $data);
+}
+
 
 
 
