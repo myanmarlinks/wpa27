@@ -25,12 +25,22 @@ function FooController($test) {
 	_load_view("test", $data);
 }
 
-function DataController($id) {
+function DataController() {
 	$data = [
-		'students' => _getDataById("students", $id)
+		'students' => _getAllData("students")
 	];
 	_load_view("data", $data);
 }
+
+function StudentController($id) {
+	$data = [
+		'student'	=> _getDataById("students", $id)
+	];
+
+	_load_view("student", $data);
+}
+
+
 
 
 
