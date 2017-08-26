@@ -1,8 +1,10 @@
 <?php 
 
-function _load_view($view, $data) {
+function _load_view($view, $data = null) {
 	ob_start("ob_gzhandler");
-	extract($data);
+	if($data != null) {
+		extract($data);	
+	}
 	require DD . "/app/view/" . $view . ".php"; 
 	ob_end_flush();
 }
@@ -23,4 +25,30 @@ function _configGet($value) {
 	}
 	
 }
+
+function _dump($value, $die = false) {
+	var_dump($value);
+	if($die == true) {
+		die();
+	}
+}
+
+function _is_logged_in() {
+	session_start();
+
+	if(!isset($_SESSION['email'])){
+		header("location: login");
+	}
+	return true;
+}
+
+
+
+
+
+
+
+
+
+
 ?>
