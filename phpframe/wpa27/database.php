@@ -7,13 +7,15 @@ function _dbConnect() {
 	$password = _configGet("database.password");
 	$dbname = _configGet("database.dbname");
 
-	$conn = mysqli_connect($servername, $username, $password, $dbname);
-
-	if (!$conn) {
-		die("Connection failed: " . mysqli_connect_error());
+	try {
+		$conn = new PDO("mysql:host=$servername;dbname=" . $dbname, $username, $password);
+		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		return $conn;
 	}
-
-	return $conn;
+	catch(PDOException $e)
+	{
+		echo "Connection failed: " . $e->getMessage();
+	}
 
 }
 
@@ -23,16 +25,14 @@ function _getAllData($table_name) {
 	$conn = _dbConnect();
 
 	$sql = "SELECT * FROM " . $table_name;
-	$result = mysqli_query($conn, $sql);
+	$result = $conn->query($sql);
 
-	if (mysqli_num_rows($result) > 0) {
-		$return_result = mysqli_fetch_all($result, MYSQLI_ASSOC);
+	if ($result->rowCount() > 0) {
+		$return_result = $result->fetchAll(PDO::FETCH_ASSOC);
 	} else {
 		$return_result = null;
 	}
-
-
-	mysqli_close($conn);
+	unset($conn);
 	return $return_result;
 }
 
@@ -40,64 +40,44 @@ function _getDataById($table_name, $id) {
 	
 	$conn = _dbConnect();
 
-	// SELECT * FROM students WHERE id = 1;DROP TABLE students;
 
-	$sql = "SELECT * FROM " . $table_name . " WHERE id = ?";
+	$sql = "SELECT * FROM " . $table_name . " WHERE id = :id";
 
-	$stmt = mysqli_stmt_init($conn);
-	mysqli_stmt_prepare($stmt, $sql);
-	mysqli_stmt_bind_param($stmt, "i", $id);
-	mysqli_stmt_execute($stmt);
+	$stmt = $conn->prepare($sql);
+	$stmt->bindParam(":id", $id);
+	$stmt->execute();
 
-	$return_result = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
+	$return_result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-	mysqli_close($conn);
+	unset($conn);
 	return $return_result;	
 }
 
 function _getByIdWhere($table_name, array $query) {
-		$conn = _dbConnect();
+	$conn = _dbConnect();
 
-		$sql = "SELECT id FROM " . $table_name . 
-				" WHERE ";
-		$keys = array_keys($query);
-		$values = array_values($query);
+	$sql = "SELECT id FROM " . $table_name . 
+	" WHERE ";
+	$keys = array_keys($query);
+	$values = array_values($query);
 
-		if(count($keys) > 0) {
-			foreach($keys as $k) {
-				$sql .= $k . " = :". $k ." AND ";
-			}
-		} else {
-			trigger_error("FOO", E_USER_ERROR);
+	if(count($keys) > 0) {
+		foreach($keys as $k) {
+			$sql .= $k . " = :". $k ." AND ";
 		}
+	} else {
+		trigger_error("FOO", E_USER_ERROR);
+	}
 
-		$new_sql = substr($sql, 0, -4);
+	$new_sql = substr($sql, 0, -4);
 
+	$stmt = $conn->prepare($new_sql);
 
+	$stmt->execute($query);
+	$return_result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+	unset($conn);
 
-		$stmt = mysqli_stmt_init($conn);
-		mysqli_stmt_prepare($stmt, $sql);
-		$bind_key_string = "";
-		foreach ($values as $v) {
-			$type = gettype($v);
-			switch ($type) {
-				case 'integer':
-					$bind_key_string .= "i";
-					break;
-				case 'string':
-					$bind_key_string .= "s";
-					break;
-			}
-		}
-
-		
-		// // mysqli_stmt_bind_param($stmt, "s", $password);
-
-		mysqli_stmt_execute($stmt, $query);
-
-		$return_result = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
-
-		return $return_result;
+	return $return_result;
 }
 
 

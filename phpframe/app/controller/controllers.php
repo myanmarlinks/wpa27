@@ -44,14 +44,14 @@ function StudentController($id) {
 
 function LoginController() {
 	
-	// if($_SERVER["REQUEST_METHOD"] == "POST") {
+	if($_SERVER["REQUEST_METHOD"] == "POST") {
 
-		// session_start();
+		session_start();
 
-		// $email = $_POST['email'];
-		// $password = $_POST['password'];
-		$email = "aung@gmail.com";
-		$hash_pass = md5('123456');
+		$email = $_POST['email'];
+		$password = $_POST['password'];
+		
+		$hash_pass = md5($password);
 
 		$return_result = _getByIdWhere('users', [
 			'email' => $email, 
@@ -68,10 +68,10 @@ function LoginController() {
 		}else {
 			$error = "Your Login Name or Password is invalid";
 		}
-		mysqli_close($conn);
-	// }
+		
+	}
 
-	// _load_view("login");
+	_load_view("login");
 }
 
 function LogoutController() {
