@@ -1,7 +1,7 @@
 <?php 
 
 function BlogController($category, $id) {
-
+	
 	$data = [
 	'title'		=> 'Myanmar Links',
 	"another"	=> 'Test',
@@ -44,34 +44,19 @@ function StudentController($id) {
 
 function LoginController() {
 	
-	if($_SERVER["REQUEST_METHOD"] == "POST") {
+	// if($_SERVER["REQUEST_METHOD"] == "POST") {
 
-		session_start();
+		// session_start();
 
-		$servername = _configGet("database.servername");
-		$username = _configGet("database.username");
-		$password = _configGet("database.password");
-		$dbname = _configGet("database.dbname");
+		// $email = $_POST['email'];
+		// $password = $_POST['password'];
+		$email = "aung@gmail.com";
+		$hash_pass = md5('123456');
 
-		$conn = mysqli_connect($servername, $username, $password, $dbname);
+		$return_result = _getByIdWhere('users', [
+			'email' => $email, 
+			'password' =>  $hash_pass]);
 
-		if (!$conn) {
-			die("Connection failed: " . mysqli_connect_error());
-		}
-
-		$email = mysqli_real_escape_string($conn, $_POST['email']);
-		$password = mysqli_real_escape_string($conn, $_POST['password']);
-		$hash_pass = md5($password);
-
-
-		$sql = "SELECT id FROM users WHERE email = ? AND password = ?";
-
-		$stmt = mysqli_stmt_init($conn);
-		mysqli_stmt_prepare($stmt, $sql);
-		mysqli_stmt_bind_param($stmt, "ss", $email, $hash_pass);
-		mysqli_stmt_execute($stmt);
-
-		$return_result = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
 		
 		$count = count($return_result);
 
@@ -84,9 +69,9 @@ function LoginController() {
 			$error = "Your Login Name or Password is invalid";
 		}
 		mysqli_close($conn);
-	}
+	// }
 
-	_load_view("login");
+	// _load_view("login");
 }
 
 function LogoutController() {
