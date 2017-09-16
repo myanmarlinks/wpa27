@@ -6,6 +6,8 @@ define("DD", realpath("../"));
 
 $students = DB::table("students")->get(); // method chain
 $student  = DB::table("students")->where(["id"=> 1])->get();
+$foo_students = DB::table("students")->select(['name'])->where(["id" => 1])->get();
+$bar_students = DB::table("students")->select(["name"])->get();
 $users = DB::table("users")->get();
 var_dump($students);
 var_dump($student);
