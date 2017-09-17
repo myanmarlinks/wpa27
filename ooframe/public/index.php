@@ -135,8 +135,6 @@ class DB extends PDO {
 		$this->where_trigger = false;
 		$this->select_statement = null;
 		$this->select_trigger = false;
-		$this->insert_state_key = null;
-		$this->insert_state_key_v = null;
 	}
 
 
