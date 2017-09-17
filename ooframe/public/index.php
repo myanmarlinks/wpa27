@@ -11,18 +11,25 @@ $stu = [
 ];
 DB::table("students")->insert($stu);
 
+DB::table("students")->delete(1);
+
+$stuupd = [
+	"name"	=> "Hlaung Hlaung",
+	'address'	=> 'Hledan'
+];
+DB::table("students")->update($stuupd)->where(["id", 1]);
+
 $students = DB::table("students")->get(); 
 $student  = DB::table("students")->where(["id"=> 1])->get();
 $foo_students = DB::table("students")->select(['id', 'name'])->where(["id" => 1])->get();
 $bar_students = DB::table("students")->select(["name"])->get();
 
 $users = DB::table("users")->get();
+
+
 var_dump($students);
 var_dump($student);
 var_dump($users);
-
-
-
 
 class DB extends PDO {
 
@@ -42,7 +49,6 @@ class DB extends PDO {
 	private $select_statement = null;
 
 	public function __construct(){ 
-		echo "DB Object Constructed<br>";
 		$this->engine = 'mysql'; 
 		$this->host = 'localhost'; 
 		$this->database = 'wpa27'; 
@@ -50,10 +56,6 @@ class DB extends PDO {
 		$this->pass = ''; 
 		$dns = $this->engine.':dbname='.$this->database.";host=".$this->host; 
 		parent::__construct( $dns, $this->user, $this->pass ); 
-	}
-
-	public function __destruct() {
-		echo "Destructor! <br>";
 	}
 
 	public static function table(string $table_name) {
@@ -126,7 +128,6 @@ class DB extends PDO {
 	 		$sql = "insert into ".$this->table_name." (".$this->columns.") value (".$this->values.")";
 	 		$this->exec($sql);
     	}
-    	return $this;
 	}
 
 	private function setToDefault() {
@@ -136,8 +137,6 @@ class DB extends PDO {
 		$this->select_statement = null;
 		$this->select_trigger = false;
 	}
-
-
 }
 
 ?>
