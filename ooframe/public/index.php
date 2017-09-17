@@ -4,16 +4,25 @@ define("DD", realpath("../"));
 
 // Singleton Pattern
 
-$students = DB::table("students")->get(); // method chain
+$stu = [
+	'name' => "Maung Maung",
+	'address'	=> 'Pazuntaung',
+	'email'	=> 'maung@gmail.com'
+];
+DB::table("students")->insert($stu);
+
+$students = DB::table("students")->get(); 
 $student  = DB::table("students")->where(["id"=> 1])->get();
-$foo_students = DB::table("students")->select(['name'])->where(["id" => 1])->get();
+$foo_students = DB::table("students")->select(['id', 'name'])->where(["id" => 1])->get();
 $bar_students = DB::table("students")->select(["name"])->get();
+
 $users = DB::table("users")->get();
 var_dump($students);
 var_dump($student);
 var_dump($users);
-// $classes = DB::table("classes")->get();
-// $products = DB::table("products")->get();
+
+
+
 
 class DB extends PDO {
 
@@ -26,8 +35,11 @@ class DB extends PDO {
 	private static $_instance;
 	private $table_name;
 	private $where_statement = null;
+
 	private $where_value = null;
 	private $where_trigger = false;
+	private $select_trigger = false;
+	private $select_statement = null;
 
 	public function __construct(){ 
 		echo "DB Object Constructed<br>";
@@ -52,6 +64,18 @@ class DB extends PDO {
 		return self::$_instance;
 	}
 
+	public function select(array $select_data) {
+		$this->select_trigger = true;
+		$select_state = "";
+		foreach($select_data as $data) {
+			$select_state .= $data . ", ";
+		}
+
+		$sub_select = substr($select_state, 0, -2);
+		$this->select_statement = $sub_select;
+		return $this;
+	}
+
 	public function where(array $where_data) {
 		$this->where_trigger = true;
 		$where_statement = " WHERE ";
@@ -65,22 +89,54 @@ class DB extends PDO {
 	}
 
 	public function get() {
-		if($this->where_trigger == false) {
-			$sql = "SELECT * FROM " . $this->table_name;
+		if($this->select_trigger == true && $this->where_trigger == true) {
+			$sql = "SELECT " . $this->select_statement . " FROM " . $this->table_name . $this->where_statement;
+
+			$prep = $this->prepare($sql);
+			$prep->execute($this->where_value);
+			$this->setToDefault();
+			return $prep->fetchAll(PDO::FETCH_ASSOC);	
+		} elseif($this->select_trigger == true && $this->where_trigger == false) {
+			$sql = "SELECT " . $this->select_statement . " FROM " . $this->table_name;
 			$prep = $this->prepare($sql);
 			$prep->execute();
+			$this->setToDefault();
 			return $prep->fetchAll(PDO::FETCH_ASSOC);	
-		} else {
-
+		} elseif($this->select_trigger == false && $this->where_trigger == true) {
 			$sql = "SELECT * FROM " . $this->table_name . $this->where_statement;
 			$prep = $this->prepare($sql);
 			$prep->execute($this->where_value);
-			$this->where_statement = null;
-			$this->where_value = null;
-			$this->where_trigger = false;
+			$this->setToDefault();
 			return $prep->fetchAll(PDO::FETCH_ASSOC);	
+		} else {
+			$sql = "SELECT * FROM " . $this->table_name;
+			$prep = $this->prepare($sql);
+			$prep->execute();
+			$this->setToDefault();
+			return $prep->fetchAll(PDO::FETCH_ASSOC);				
 		}
-		
+	}
+
+	public function insert() {
+		$args = func_get_args();
+    	for($i=0; $i<count($args); $i++){
+    		$arr = $args[$i];
+			$this->columns = implode(",", array_keys($arr));
+	    	$this->values = "'".implode("','", array_values($arr))."'";
+	 		$sql = "insert into ".$this->table_name." (".$this->columns.") value (".$this->values.")";
+	 		$this->exec($sql);
+    	}
+    	return $this;
+	}
+
+	private function setToDefault() {
+		$this->where_statement = null;
+		$this->where_value = null;
+		$this->where_trigger = false;
+		$this->select_statement = null;
+		$this->select_trigger = false;
+		$this->insert_state_key = null;
+		$this->insert_state_key_v = null;
 	}
 
 
