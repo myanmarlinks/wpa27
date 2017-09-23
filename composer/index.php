@@ -1,6 +1,7 @@
 <?php 
 
 require "vendor/autoload.php";
+
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
@@ -10,5 +11,7 @@ $log->addWarning('You site has been under attacked!');
 
 $dog = new Dog();
 $cat = new Cat();
+
+dump($dog, true);
 
  ?>
