@@ -1,0 +1,11 @@
+{
+    "require": {
+        "monolog/monolog": "^1.23",
+        "twitter/bootstrap": "^3.3"
+    },
+    "autoload": {
+    	"classmap": [
+    		"test"
+    	]
+    }
+}
